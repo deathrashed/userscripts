@@ -63,6 +63,19 @@
             min-width: 200px;
             max-height: 600px; /* Increased for more links */
             overflow-y: auto;
+            direction: rtl; /* Puts scrollbar on the left */
+        }
+        #external-music-menu::-webkit-scrollbar {
+            width: 6px; /* Thinner scrollbar */
+        }
+        #external-music-menu::-webkit-scrollbar-track {
+            background: #282828; /* Dark track */
+        }
+        #external-music-menu::-webkit-scrollbar-thumb {
+            background: #666; /* Dark thumb */
+        }
+        #external-music-menu::-webkit-scrollbar-thumb:hover {
+            background: #999; /* Lighter on hover */
         }
         #external-music-menu.visible {
             display: block;
@@ -72,13 +85,24 @@
             padding: 5px 15px;
             color: #999;
             font-size: 12px;
+            direction: ltr; /* Keep text left-to-right */
+        }
+        #external-music-menu .menu-section {
+            color: #DA2323 !important; /* Last.fm red for subheadings */
+        }
+        #current-context {
+            color: #FF1B20 !important; /* Red for the selection, with !important to override */
+            font-size: 16px; /* Increased for better visibility */
+            font-weight: bold;
+            direction: ltr; /* Keep text left-to-right */
         }
         #external-music-menu a {
             display: block;
             padding: 8px 15px;
             color: white !important;
             text-decoration: none !important;
-            font-size: 14px;
+            font-size: 13px; /* Slightly smaller font for options */
+            direction: ltr; /* Keep text left-to-right */
         }
         #external-music-menu a:hover {
             background: #3a3a3a;
@@ -89,6 +113,7 @@
             border: none;
             height: 1px;
             background: #444;
+            direction: ltr; /* Keep horizontal rule normal */
         }
         #external-music-menu a.disabled {
             color: #666 !important;
@@ -109,19 +134,20 @@
         button.title = 'External Music Services';
         document.body.appendChild(button);
 
-        // Create menu with expanded and categorized links (added Additional and AI sections, moved Metal Storm)
+        // Create menu with expanded and categorized links (added Fanart.tv and Musixmatch, separator before Databases)
         const menu = document.createElement('div');
         menu.id = 'external-music-menu';
         menu.innerHTML = `
             <p id="current-context"></p>
-            <p>Databases</p>
+            <hr>
+            <p class="menu-section">Databases</p>
             <a href="#" id="google-band-link" target="_blank" title="Search Google for Band">Google</a>
             <a href="#" id="metal-archives-link" target="_blank" title="Search on Metal Archives">Metal Archives</a>
             <a href="#" id="rym-link" target="_blank" title="Search on Rate Your Music">Rate Your Music</a>
             <a href="#" id="discogs-link" target="_blank" title="Search on Discogs">Discogs</a>
             <a href="#" id="musicbrainz-link" target="_blank" title="Search on MusicBrainz">MusicBrainz</a>
             <hr>
-            <p>Streaming</p>
+            <p class="menu-section">Streaming</p>
             <a href="#" id="spotify-link" target="_blank" title="Search on Spotify">Spotify</a>
             <a href="#" id="youtube-link" target="_blank" title="Search on YouTube">YouTube</a>
             <a href="#" id="apple-music-link" target="_blank" title="Search on Apple Music">Apple</a>
@@ -129,28 +155,30 @@
             <a href="#" id="soundcloud-link" target="_blank" title="Search on SoundCloud">SoundCloud</a>
             <a href="#" id="deezer-link" target="_blank" title="Search on Deezer">Deezer</a>
             <hr>
-            <p>Lyrics</p>
+            <p class="menu-section">Lyrics</p>
             <a href="#" id="genius-link" target="_blank" title="Search on Genius">Genius</a>
             <a href="#" id="darklyrics-link" target="_blank" title="Search on DarkLyrics">Dark Lyrics</a>
             <a href="#" id="google-lyrics-link" target="_blank" title="Search Google for Lyrics">Google</a>
+            <a href="#" id="musixmatch-link" target="_blank" title="Search on Musixmatch">Musixmatch</a>
             <hr>
-            <p>Covers & Images</p>
+            <p class="menu-section">Covers & Images</p>
             <a href="#" id="cov-musichoarderz-link" target="_blank" title="Search Covers on MusicHoarderz">COV - MusicHoarders</a>
             <a href="#" id="google-images-link" target="_blank" title="Search Large Images on Google">Google</a>
             <hr>
-            <p>Social Media</p>
+            <p class="menu-section">Social Media</p>
             <a href="#" id="instagram-link" target="_blank" title="Explore Tag on Instagram">Instagram</a>
             <a href="#" id="facebook-link" target="_blank" title="Search on Facebook">Facebook</a>
             <a href="#" id="reddit-link" target="_blank" title="Search on Reddit">Reddit</a>
             <hr>
-            <p>Additional</p>
+            <p class="menu-section">Additional</p>
             <a href="#" id="wikipedia-link" target="_blank" title="Search on Wikipedia">Wikipedia</a>
             <a href="#" id="allmusic-link" target="_blank" title="Search on AllMusic">AllMusic</a>
             <a href="#" id="chosic-link" target="_blank" title="Search on Chosic">Chosic</a>
             <a href="#" id="spirit-of-metal-link" target="_blank" title="Search on Spirit of Metal">Spirit of Metal</a>
             <a href="#" id="metalstorm-link" target="_blank" title="Search on MetalStorm">Metal Storm</a>
+            <a href="#" id="fanart-tv-link" target="_blank" title="Search on Fanart.tv">Fanart.tv</a>
             <hr>
-            <p>AI</p>
+            <p class="menu-section">AI</p>
             <a href="#" id="perplexity-link" target="_blank" title="Search on Perplexity">Perplexity</a>
             <a href="#" id="chatgpt-link" target="_blank" title="Search on ChatGPT">ChatGPT</a>
             <a href="#" id="you-link" target="_blank" title="Search on You">You</a>
@@ -181,12 +209,12 @@
         const encodedAlbum = encodeURIComponent(album || '');
         const query = album ? `${encodedAlbum} ${encodedArtist}` : encodedArtist;
 
-        // Update menu header
+        // Update menu header with just the selection in red
         const contextEl = document.getElementById('current-context');
         if (artist && album) {
-            contextEl.textContent = `Album: ${album} by ${artist}`;
+            contextEl.textContent = `${album} by ${artist}`;
         } else if (artist) {
-            contextEl.textContent = `Artist: ${artist}`;
+            contextEl.textContent = artist;
         } else {
             contextEl.textContent = 'No artist/album detected';
         }
@@ -237,12 +265,14 @@
             `http://www.darklyrics.com/search?q=${query}`;
         document.getElementById('google-lyrics-link').href =
             `https://www.google.com/search?q=${query}+lyrics`;
+        document.getElementById('musixmatch-link').href =
+            `https://www.musixmatch.com/search?query=${query}`;
         // COV - MusicHoarderz: Artist-focused
         document.getElementById('cov-musichoarderz-link').href =
             `https://covers.musichoarders.xyz?artist=${encodedArtist}`;
         // Social and general: Use query (album + artist or artist)
         document.getElementById('instagram-link').href =
-            `https://www.instagram.com/explore/tags/${encodeURIComponent(query.replace(/\s+/g, ''))}/`;
+            `https://www.instagram.com/explore/search/keyword/?q=${encodedArtist}+band`;
         document.getElementById('facebook-link').href =
             `https://www.facebook.com/search/top?q=${query}`;
         document.getElementById('reddit-link').href =
@@ -267,6 +297,8 @@
             document.getElementById('metalstorm-link').href =
                 `https://metalstorm.net/bands/index.php?b_where=b.bandname&b_what=${encodedArtist}`;
         }
+        document.getElementById('fanart-tv-link').href =
+            `https://fanart.tv/add-entry/?tab=music&search=${encodedArtist}#music`;
         // AI section
         const aiPrompt = encodeURIComponent(`give me a comprehensive overview of the band ${artist}`);
         document.getElementById('perplexity-link').href =
@@ -281,7 +313,7 @@
 
     // Function to show popup with artist context
     function showPopupForArtist(artistName) {
-        currentArtist = artistName.replace(/\+/g, ' ').toLowerCase(); // Normalize
+        currentArtist = artistName.replace(/\+/g, ' '); // Removed .toLowerCase() to preserve case
         currentAlbum = ''; // Dots are for artists, so no album
         updateMenuLinks(currentArtist, currentAlbum);
         const menu = document.getElementById('external-music-menu');
