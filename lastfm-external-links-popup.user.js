@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           Last.fm: External Links Popup
-// @namespace      https://github.com/deathrashed/userscripts
+// @namespace      https://github.com/deathrashed/lastfm-userscript
 // @description    Quick-access popup ⁖ for external links on Last.fm artist pages. Creates a small ⁖ in front of each artist link on www.last.fm. Clicking it opens a popup menu with external services, updated based on the clicked artist.
 // @icon           https://cdn.icon-icons.com/icons2/808/PNG/512/lastfm_icon-icons.com_66107.png
 // @match          https://www.last.fm/*
